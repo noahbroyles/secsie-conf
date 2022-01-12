@@ -15,7 +15,7 @@ These are the rules of the language:
 5. To begin a section use the following syntax:
 ```conf
 [section1]
-# Value declarations in this section follow
+# attribute lines in this section follow
 ```
 6. The syntax for an attribute line is:
 ```conf

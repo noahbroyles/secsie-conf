@@ -1,0 +1,21 @@
+; This is an example of a valid secsie file
+
+before_section = totally okay
+
+# Whitespace don't matter
+
+; Here are examples of how types are interpreted(no keywords are off limits!)
+int = 42
+float = 269.887
+truth = yes
+falsehood = no
+true = true
+; I don't encourage this but it's valid ;)
+false = FaLSe
+
+[SectionTime]
+    # The indent here is optional, included for readability
+    sections = are amazing
+
+[nextSection248]
+    intVal = 2

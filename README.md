@@ -23,3 +23,28 @@ key = value
 ```
 7. Spaces are not allowed in key names or section tags. Only `a-z`, `A-Z` and `0-9` are allowed in section tag names, while special characters are allowed in key names.
 8. Values can consist of any character except `#`. Leading and trailing whitespace is removed, however.
+
+## Examples:
+```conf
+; This is an example of a valid secsie file
+
+before_section = totally okay
+
+# Whitespace don't matter
+
+; Here are examples of how types are interpreted(no keywords are off limits!)
+int = 42
+float = 269.887
+truth = yes
+falsehood = no
+true = true
+; I don't encourage this but it's valid ;)
+false = FaLSe
+
+[SectionTime]
+    # The indent here is optional, included for readability
+    sections = are amazing
+
+[nextSection248]
+    intVal = 2
+```

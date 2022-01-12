@@ -25,6 +25,7 @@ key = value
 8. Values can consist of any character except `#`. Leading and trailing whitespace is removed, however.
 
 ## Examples:
+`examples/valid.secsie`:
 ```conf
 ; This is an example of a valid secsie file
 
@@ -47,4 +48,8 @@ false = FaLSe
 
 [nextSection248]
     intVal = 2
+```
+Parse result:
+```json
+{'before_section': 'totally okay', 'int': 42, 'float': 269.887, 'truth': True, 'falsehood': False, 'true': True, 'false': False, 'SectionTime': {'sections': 'are amazing'}, 'nextSection248': {'intVal': 2}}
 ```

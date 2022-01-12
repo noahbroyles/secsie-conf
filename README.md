@@ -22,4 +22,4 @@ These are the rules of the language:
 key = value
 ```
 7. Spaces are not allowed in key names or section tags. Only `a-z`, `A-Z` and `0-9` are allowed in section tag names, while special characters are allowed in key names.
-8. Values can consist of any character except `#`. Leading and trailing spaces are removed, however.
+8. Values can consist of any character except `#`. Leading and trailing whitespace is removed, however.

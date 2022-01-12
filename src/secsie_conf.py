@@ -6,6 +6,9 @@ __version__ = 'v1.0.0'
 
 SECTION_EX = re.compile(r'\[([a-zA-Z0-9]+)\]')
 FLOAT_EX = re.compile(r'^(\d+[\.]\d*)$')
+FALSE_EX = re.compile(r'(false|no)', re.IGNORECASE)
+NULL_EX = re.compile(r'null', re.IGNORECASE)
+TRUE_EX = re.compile(r'(true|yes)', re.IGNORECASE)
 INT_EX = re.compile(r'^\d+$')
 
 
@@ -23,6 +26,12 @@ def _write_to_conf_(conf: dict, line, line_number: int, section=None) -> dict:
         value = float(value)
     elif INT_EX.match(value):
         value = int(value)
+    elif NULL_EX.match(value):
+        value = None
+    elif TRUE_EX.match(value):
+        value = True
+    elif FALSE_EX.match(value):
+        value = False
 
     if section is None:
         conf[key] = value

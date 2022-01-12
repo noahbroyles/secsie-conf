@@ -13,8 +13,9 @@ These are the rules of the language:
 3. A config file consists of sections and attributes(keys and values).
 4. A section ends where the next section begins. Attributes declared before sections are valid.
 5. To begin a section use the following syntax:
-```markdown
+```conf
 [section1]
+# Value declarations in this section follow
 ```
 6. The syntax for an attribute line is:
 ```conf

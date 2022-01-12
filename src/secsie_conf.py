@@ -34,7 +34,7 @@ def _write_to_conf_(conf: dict, line, line_number: int, section=None) -> dict:
     return conf
 
 
-def parse_config(conf_file: str) -> dict:
+def parse_config_file(conf_file: str) -> dict:
     with open(conf_file, 'r') as f:
         lines = [l.strip('\n') for l in f.readlines()]
     conf = {}
@@ -57,18 +57,7 @@ def parse_config(conf_file: str) -> dict:
 
 
 def generate_config(obj: dict, output_file: str = None) -> str:
-    conf = """# This was auto-generated from JSON by sexyConf
-
-# These are the rules of the language:
-# Comment lines can begin with '#' or ';', but inline comments can only begin with the octothorpe.
-# Whitespace is ignored, except in key names and section tag names. The config consists of sections, and attributes(keys and values).
-# A sections end when the next section begins. Attributes do not need to be in a section to be valid.
-# To begin a section use the following syntax:
-; [section1]
-# The syntax for an attribute line is:
-; key = value
-# Spaces are not allowed in keys or section tags. Only abc, ABC and 123 are allowed in section tag names.
-# Leading and trailing whitespace is removed from keys and values.\n\n"""
+    conf = "# auto-generated from JSON by secsie-conf\n\n"
     for key, value in obj.items():
         if isinstance(value, dict):
             conf += f"\n[{key}]\n"

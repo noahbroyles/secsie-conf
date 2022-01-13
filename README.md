@@ -26,7 +26,7 @@ key = value
 7. Spaces are not allowed in key names or section tags. Only `a-z`, `A-Z`, `0-9` and `_` are allowed in section tag names, while special characters *are* allowed in key names.
 8. Values can consist of any character except `#`. Leading and trailing whitespace is removed.
 
-## INI:
+## INI
 `secsie-conf` can be used to read `.ini` files, as long as the mode `ini` is specifed to the parser. The rules of interpretation for `.ini` files vary slightly.
 ### Differences:
 - Section names are allowed to contain spaces

@@ -32,7 +32,7 @@ key = value
 ## INI
 `secsie-conf` can be used to read `.ini` files, as long as the mode `ini` is specifed to the parser. The rules of interpretation for `.ini` files vary slightly.
 ### Differences:
-- Section names are allowed to contain spaces
+- Section names are allowed to contain spaces and dashes
 - quoted strings are valid, but the quotes are removed (there is no need to quote string in `secsie` ;)  
 `secsie-conf` can **NOT** be used to write `.ini` files. You can read an `.ini` file and output it in valid `secsie`, but you cannot expect valid `.ini` output.
 

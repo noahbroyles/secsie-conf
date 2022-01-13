@@ -15,12 +15,24 @@ __author__ = 'Noah Broyles'
 import re
 
 
-SECTION_EX = re.compile(r'\[([a-zA-Z0-9]+)\]')
-FLOAT_EX = re.compile(r'^(\d+[\.]\d*)$')
-FALSE_EX = re.compile(r'(false|no)', re.IGNORECASE)
-NULL_EX = re.compile(r'null', re.IGNORECASE)
-TRUE_EX = re.compile(r'(true|yes)', re.IGNORECASE)
-INT_EX = re.compile(r'^\d+$')
+MODES = {
+    "secsie": dict(
+        SECTION_EX = re.compile(r'\[([a-zA-Z0-9]+)\]'),
+        FLOAT_EX = re.compile(r'^([-]?\d+[\.]\d*)$'),
+        FALSE_EX = re.compile(r'(false|no)', re.IGNORECASE),
+        NULL_EX = re.compile(r'null', re.IGNORECASE),
+        TRUE_EX = re.compile(r'(true|yes)', re.IGNORECASE),
+        INT_EX = re.compile(r'^[-]?\d+$')
+    ),
+    "ini": dict(
+        SECTION_EX = re.compile(r'\[([a-zA-Z0-9 _]+)\]'),
+        FLOAT_EX = re.compile(r'^([-]?\d+[\.]\d*)$'),
+        FALSE_EX = re.compile(r'(false|no)', re.IGNORECASE),
+        NULL_EX = re.compile(r'null', re.IGNORECASE),
+        TRUE_EX = re.compile(r'(true|yes)', re.IGNORECASE),
+        INT_EX = re.compile(r'^[-]?\d+$')
+    )
+}
 
 
 class InvalidSyntax(SyntaxError):
@@ -29,7 +41,7 @@ class InvalidSyntax(SyntaxError):
         super().__init__(error_message)
 
 
-def _write_to_conf_(conf: dict, line, line_number: int, section=None) -> dict:
+def _write_to_conf_(conf: dict, line, line_number: int, section=None, mode: str = 'secsie') -> dict:
     key_value = [c.strip() for c in line.split('=')]
     try:
         key, value = key_value[0], key_value[1].split('#')[0].strip()
@@ -39,15 +51,15 @@ def _write_to_conf_(conf: dict, line, line_number: int, section=None) -> dict:
     if ' ' in key:
         raise InvalidSyntax(f"Syntax Error on line {line_number}: Spaces not allowed in keys")
 
-    if FLOAT_EX.match(value):
+    if MODES[mode]["FLOAT_EX"].match(value):
         value = float(value)
-    elif INT_EX.match(value):
+    elif MODES[mode]["INT_EX"].match(value):
         value = int(value)
-    elif NULL_EX.match(value):
+    elif MODES[mode]["NULL_EX"].match(value):
         value = None
-    elif TRUE_EX.match(value):
+    elif MODES[mode]["TRUE_EX"].match(value):
         value = True
-    elif FALSE_EX.match(value):
+    elif MODES[mode]["FALSE_EX"].match(value):
         value = False
 
     if section is None:
@@ -60,7 +72,7 @@ def _write_to_conf_(conf: dict, line, line_number: int, section=None) -> dict:
     return conf
 
 
-def parse_config_file(conf_file: str) -> dict:
+def parse_config_file(conf_file: str, mode: str = 'secsie') -> dict:
     """
     Reads a config file and returns a dictionary of the values inside.
     """
@@ -77,10 +89,10 @@ def parse_config_file(conf_file: str) -> dict:
         if line.startswith('#') or line.startswith(';'):
             continue
         # Check to see if this is a section
-        if SECTION_EX.match(line):
-            c_section = SECTION_EX.findall(line)[0]
+        if MODES[mode]["SECTION_EX"].match(line):
+            c_section = MODES[mode]["SECTION_EX"].findall(line)[0]
             continue
-        conf = _write_to_conf_(conf, line, line_number=lineno, section=c_section)
+        conf = _write_to_conf_(conf, line, line_number=lineno, section=c_section, mode=mode)
 
     return conf
 

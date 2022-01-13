@@ -50,6 +50,11 @@ untruth = falsE
 untruth2 = False
 untruth3 = no
 ```
+### Null type (`None`):
+```conf
+# 'null' is used as the NoneType (case insensitive)
+nothing = null
+```
 ## Examples
 `examples/valid.secsie`:
 ```conf

@@ -1,5 +1,5 @@
 # secsie-conf
-SecsieConf is a configuration language made for speed and beauty. Instead of writing config files in JSON (don't get me wrong, this *FAR* better than a lot of other crap), you can save time writing your config files in secsie.  
+Secsie is a configuration language made for speed and beauty. Instead of writing config files in JSON (don't get me wrong, this *FAR* better than a lot of other crap), you can save time writing your config files in secsie.  
 ### Advantages over JSON:
 - easier to read
 - faster to write

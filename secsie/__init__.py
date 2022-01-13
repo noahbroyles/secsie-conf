@@ -14,7 +14,7 @@ A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
 
-__version__ = 'v1.0.0'
+__version__ = 'v1.0.1'
 __author__ = 'Noah Broyles'
 
 

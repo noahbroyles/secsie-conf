@@ -21,10 +21,9 @@ setup(
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3"
     ],
     packages=["secsie"],
     include_package_data=True,
-    install_requires=["json", "re"]
+    #install_requires=["json", "re"]  wow this is bad
 )

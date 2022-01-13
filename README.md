@@ -3,7 +3,7 @@ Secsie is a configuration language made for speed and beauty. Instead of writing
 ### Advantages over JSON:
 - easier to read
 - faster to write
-- automatically parses datatypes such as ints, floats, strings, bools, and null values with no special syntax required
+- no special syntax required for strings vs ints, floats, bools, etc.
 
 
 ## Language Contructs
@@ -24,7 +24,33 @@ key = value
 7. Spaces are not allowed in key names or section tags. Only `a-z`, `A-Z` and `0-9` are allowed in section tag names, while special characters are allowed in key names.
 8. Values can consist of any character except `#`. Leading and trailing whitespace is removed, however.
 
-## Examples:
+## Valid values
+Secsie supports strings, ints, floats, null types, and booleans. All of these types can be written out by themselves and will automatically be converted to the appropriate native type.
+### Strings:
+```conf
+# Spaces are allowed in string value
+string_key = whatever value you want
+```
+### Ints:
+```conf
+numb = 42  # Automatically converted to int when parsed
+```
+### Floats:
+```conf
+pi = 3.14159265  # Automatically converted to float when parsed
+```
+### Booleans:
+```conf
+# True and yes are truthy values (case insensitive)
+truth = true
+truth2 = True
+truth3 = yes
+# False and no are falsy values (case insensitive)
+untruth = falsE
+untruth2 = False
+untruth3 = no
+```
+## Examples
 `examples/valid.secsie`:
 ```conf
 ; This is an example of a valid secsie file

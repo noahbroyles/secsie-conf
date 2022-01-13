@@ -10,7 +10,7 @@ A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
 
-__version__ = 'v2.0.2'
+__version__ = 'v2.0.3'
 __author__ = 'Noah Broyles'
 __all__ = [
     'InvalidSyntax',
@@ -29,7 +29,7 @@ MODES = {
         SECTION_EX = re.compile(r'\[([a-zA-Z0-9_]+)\]'),
         FLOAT_EX = re.compile(r'^([-]?\d+[\.]\d*)$'),
         FALSE_EX = re.compile(r'^(false|no)$', re.IGNORECASE),
-        NULL_EX = re.compile(r'null', re.IGNORECASE),
+        NULL_EX = re.compile(r'^null$', re.IGNORECASE),
         TRUE_EX = re.compile(r'^(true|yes)$', re.IGNORECASE),
         INT_EX = re.compile(r'^[-]?\d+$')
     ),
@@ -37,7 +37,7 @@ MODES = {
         SECTION_EX = re.compile(r'\[([a-zA-Z0-9 _-]+)\]'),
         FLOAT_EX = re.compile(r'^([-]?\d+[\.]\d*)$'),
         FALSE_EX = re.compile(r'^(false|no)$', re.IGNORECASE),
-        NULL_EX = re.compile(r'null', re.IGNORECASE),
+        NULL_EX = re.compile(r'^null$', re.IGNORECASE),
         TRUE_EX = re.compile(r'^(true|yes)$', re.IGNORECASE),
         INT_EX = re.compile(r'^[-]?\d+$')
     )

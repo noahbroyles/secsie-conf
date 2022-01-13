@@ -1,7 +1,3 @@
-import re
-
-from pathlib import Path
-
 """
 ---------------------------------------
    _____                    _      
@@ -14,10 +10,8 @@ A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
 
-__version__ = 'v2.0.0'
+__version__ = 'v2.0.1'
 __author__ = 'Noah Broyles'
-
-
 __all__ = [
     'InvalidSyntax',
     'parse_config',
@@ -25,6 +19,10 @@ __all__ = [
     'generate_config',
     'generate_config_file'
 ]
+
+import re
+from pathlib import Path
+
 
 MODES = {
     "secsie": dict(

@@ -1,3 +1,4 @@
+import secsie
 import pathlib
 from setuptools import setup
 
@@ -10,7 +11,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="secsie-conf",
-    version="1.0.0",
+    version=secsie.__version__,
     description="A small library for parsing configuration files",
     long_description=README,
     long_description_content_type="text/markdown",

@@ -1,4 +1,7 @@
 # secsie-conf
+```console
+pip3 install secsie-conf
+```
 Secsie is a configuration language parser for Python, made for speed and beauty. Instead of writing config files in JSON (don't get me wrong, JSON is *FAR* better than a lot of other things you could use (cough cough XML)), you can save time writing your config files in `secsie`.  
 The `secsie` language format is very similar to `ini`, except just a little better. You can use `secsie-conf` to read `.ini` files into Python `dict`s. `secsie-conf` will NOT write `.ini` files however, at least at this stage.
 

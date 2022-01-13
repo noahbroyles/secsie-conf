@@ -10,4 +10,4 @@ print(json.dumps(config, indent=2))  # For prettyness
 config = secsie.parse_config_file('examples/php.ini', mode='ini')
 
 # write secsie file from config obj
-secsie.generate_config(config, output_file='examples/php_ini.secsie.conf')
+secsie.generate_config_file(config, output_file='examples/php_ini.secsie.conf')

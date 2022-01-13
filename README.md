@@ -287,7 +287,7 @@ That **^**'s a whole PHP configuration file converted to some <s>sexy</s> secsie
 ### Write a `secsie` file:
 Now that we have the `php.ini` contents stored in `config`, let's output it in `secsie`!
 ```python
-secsie.generate_config(config, output_file='examples/php_ini.secsie.conf')
+secsie.generate_config_file(config, output_file='examples/php_ini.secsie.conf')
 ```
 Output (`examples/php_ini.secsie.conf`):
 ```ini

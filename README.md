@@ -1,6 +1,6 @@
 # secsie-conf
-Secsie is a configuration language parser for Python, made for speed and beauty. Instead of writing config files in JSON (don't get me wrong, JSON is *FAR* better than a lot of other things you could use (cough cough XML)), you can save time writing your config files in Secsie.  
-The `secsie` language format is very similar to `ini`(really I'm not sure what the differences are), meaning that you can use `secsie-conf` to read `.ini` files into Python.
+Secsie is a configuration language parser for Python, made for speed and beauty. Instead of writing config files in JSON (don't get me wrong, JSON is *FAR* better than a lot of other things you could use (cough cough XML)), you can save time writing your config files in `secsie`.  
+The `secsie` language format is very similar to `ini`, except just a little better. You can use `secsie-conf` to read `.ini` files into Python `dict`s. `secsie-conf` will NOT write `.ini` files however, at least at this stage.
 
 ### Advantages over JSON:
 - easier to read
@@ -8,8 +8,8 @@ The `secsie` language format is very similar to `ini`(really I'm not sure what t
 - no special syntax required for strings vs ints, floats, bools, etc.
 
 
-## Language Contructs
-These are the rules of the language:
+## Secsie Language Contructs
+These are the rules of the secsie config language:
 1. Comment lines begin with `#` or `;`, but inline comments can only begin with the octothorpe (`#`).
 2. Whitespace is ignored everywhere except in key names and section tag names.
 3. A config file consists of sections and attributes(keys and values).
@@ -23,8 +23,15 @@ These are the rules of the language:
 ```ini
 key = value
 ```
-7. Spaces are not allowed in key names or section tags. Only `a-z`, `A-Z` and `0-9` are allowed in section tag names, while special characters are allowed in key names.
-8. Values can consist of any character except `#`. Leading and trailing whitespace is removed, however.
+7. Spaces are not allowed in key names or section tags. Only `a-z`, `A-Z`, `0-9` and `_` are allowed in section tag names, while special characters *are* allowed in key names.
+8. Values can consist of any character except `#`. Leading and trailing whitespace is removed.
+
+## INI:
+`secsie-conf` can be used to read `.ini` files, as long as the mode `ini` is specifed to the parser. The rules of interpretation for `.ini` files vary slightly.
+### Differences:
+- Section names are allowed to contain spaces
+- quoted strings are valid, but the quotes are removed (there is no need to quote string in `secsie` ;)  
+`secsie-conf` can **NOT** be used to write `.ini` files. You can read an `.ini` file and output it in valid `secsie`, but you cannot expect valid `.ini` output.
 
 ## Valid values
 Secsie supports strings, ints, floats, null types, and booleans. All of these types can be written out by themselves and will automatically be converted to the appropriate native type.
@@ -59,7 +66,7 @@ nothing = null
 ```
 
 ## Examples
-`examples/valid.secsie`:
+`examples/valid.secsie.conf`:
 ```ini
 ; This is an example of a valid secsie file
 
@@ -76,6 +83,9 @@ true = true
 ; I don't encourage this but it's valid ;)
 false = FaLSe
 
+# Null value
+nah = Null
+
 [SectionTime]
     # The indent here is optional, included for readability
     sections = are amazing
@@ -85,5 +95,10 @@ false = FaLSe
 ```
 Parse result:
 ```python
-{'before_section': 'totally okay', 'int': 42, 'float': 269.887, 'truth': True, 'falsehood': False, 'true': True, 'false': False, 'SectionTime': {'sections': 'are amazing'}, 'nextSection248': {'intVal': 2}}
+{'before_section': 'totally okay', 'int': 42, 'float': 269.887, 'truth': True, 'falsehood': False, 'true': True, 'false': False, 'nah': None, 'SectionTime': {'sections': 'are amazing'}, 'nextSection248': {'intVal': 2}}
+```
+
+## How to use the module
+```python
+import secsie
 ```

@@ -20,8 +20,10 @@ __author__ = 'Noah Broyles'
 
 __all__ = [
     'InvalidSyntax',
+    'parse_config',
     'parse_config_file',
-    'generate_config'
+    'generate_config',
+    'generate_config_file'
 ]
 
 MODES = {

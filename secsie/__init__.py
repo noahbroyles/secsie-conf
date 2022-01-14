@@ -10,7 +10,7 @@ A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
 
-__version__ = 'v2.1.0'
+__version__ = '2.1.1'
 __author__ = 'Noah Broyles'
 __all__ = [
     'InvalidSyntax',

@@ -8,11 +8,15 @@ def test_whitespace_insensitivity():
     config = secsie.parse_config(
     """
 key    =     value
+
+
                     key2=value2
-ur\t=mom
+ur\t=cute
+    space-values =   this      should be chilll     bro
     """
     )
 
     assert config['key'] == 'value'
     assert config['key2'] == 'value2'
-    assert config['ur'] == 'mom'
+    assert config['ur'] == 'cute'
+    assert config['space-values'] == 'this      should be chilll     bro'

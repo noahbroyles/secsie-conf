@@ -1,0 +1,19 @@
+; test
+# comments
+
+# Test data before sections
+before_section = totally okay I hope!
+
+
+# Here are examples of how types are interpreted(no keywords are off limits!)
+[bluepill-database-configuration] # we just got frisky
+    server = 42.132.53.21  # inline commnent test
+    username = bigPharma
+    password = passquordNinjaNinge591~!
+    database = pharmacyProd
+    type = SQL Server Enterprise 2019
+    port = 2669
+
+[anotherSection]
+    # The indent here is optional, included for readability
+    sections = are amazing

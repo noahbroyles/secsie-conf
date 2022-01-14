@@ -263,7 +263,7 @@ print(json.dumps(config, indent=2))
     "session.cache_expire": 180,
     "session.use_trans_sid": 0,
     "session.sid_length": 26,
-    "session.trans_sid_tags": "a",
+    "session.trans_sid_tags": "a=href,area=href,frame=src,form=",
     "session.sid_bits_per_character": 5
   },
   "Assertion": {
@@ -413,7 +413,7 @@ Output (`examples/php_ini.secsie.conf`):
 	session.cache_expire = 180
 	session.use_trans_sid = 0
 	session.sid_length = 26
-	session.trans_sid_tags = a
+	session.trans_sid_tags = a=href,area=href,frame=src,form=
 	session.sid_bits_per_character = 5
 
 

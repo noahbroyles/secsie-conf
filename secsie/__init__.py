@@ -1,4 +1,4 @@
-"""
+r"""
 ---------------------------------------
    _____                    _      
   / ___/ ___   _____ _____ (_)___   
@@ -10,7 +10,7 @@ A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
 
-__version__ = 'v2.0.3'
+__version__ = 'v2.1.0'
 __author__ = 'Noah Broyles'
 __all__ = [
     'InvalidSyntax',
@@ -26,7 +26,7 @@ from pathlib import Path
 
 MODES = {
     "secsie": dict(
-        SECTION_EX = re.compile(r'\[([a-zA-Z0-9_-]+)\]'),
+        SECTION_EX = re.compile(r'^\[([a-zA-Z0-9_-]+)\]$'),
         FLOAT_EX = re.compile(r'^([-]?\d+[\.]\d*)$'),
         FALSE_EX = re.compile(r'^(false|no)$', re.IGNORECASE),
         NULL_EX = re.compile(r'^null$', re.IGNORECASE),
@@ -34,7 +34,7 @@ MODES = {
         INT_EX = re.compile(r'^[-]?\d+$')
     ),
     "ini": dict(
-        SECTION_EX = re.compile(r'\[([a-zA-Z0-9 _-]+)\]'),
+        SECTION_EX = re.compile(r'^\[([a-zA-Z0-9 _-]+)\]$'),
         FLOAT_EX = re.compile(r'^([-]?\d+[\.]\d*)$'),
         FALSE_EX = re.compile(r'^(false|no)$', re.IGNORECASE),
         NULL_EX = re.compile(r'^null$', re.IGNORECASE),
@@ -46,24 +46,26 @@ MODES = {
 
 class InvalidSyntax(SyntaxError):
     """This happens when the config you're trying to parse is invalid."""
-    def __init__(self, error_message: str):
-        super().__init__(error_message)
+    def __init__(self, error_message: str, line_number: int):
+        super().__init__(f"Invalid syntax on line {line_number}: {error_message}")
+        self.lineno = line_number
 
 
 def _write_to_conf_(conf: dict, line, line_number: int, section=None, mode: str = 'secsie') -> dict:
     key_value = [c.strip() for c in line.split('=')]
-    try:
-        key, value = key_value[0], key_value[1].split('#')[0].strip()
-        if mode == 'ini':
-            # Attempt to get ini strings right
-            if value.startswith('"'):
-                # This is an ini string, we need to remove the quotes
-                value = value.strip('"')
-    except IndexError:
-        raise InvalidSyntax(f'Syntax Error on line {line_number}: "{line}" bad section descriptor or value assignment')
+
+    if len(key_value) < 2:
+        raise InvalidSyntax(f'"{line}" - bad section descriptor or value assignment', line_number)
+
+    key, value = key_value[0], '='.join(key_value[1:])  # We want to allow '=' in our values
+    if mode == 'ini':
+        # Attempt to get ini strings right
+        if value.startswith('"'):
+            # This is an ini string, we need to remove the quotes
+            value = value.strip('"')
 
     if ' ' in key:
-        raise InvalidSyntax(f"Syntax Error on line {line_number}: Spaces not allowed in keys")
+        raise InvalidSyntax("spaces not allowed in keys", line_number)
 
     if MODES[mode]["FLOAT_EX"].match(value):
         value = float(value)
@@ -94,7 +96,8 @@ def parse_config(config: str, mode: str = 'secsie') -> dict:
     lineno = 0
     for line in lines:
         lineno += 1
-        line = line.strip()
+        # Handle inline comments
+        line = line.split('#')[0].strip()
         if line == '':  # Skip blank lines
             continue
         if line.startswith('#') or line.startswith(';'):

@@ -26,7 +26,7 @@ These are the rules of the secsie config language:
 ```ini
 key = value
 ```
-7. Spaces are not allowed in key names or section tags. Only `a-z`, `A-Z`, `0-9` and `_` are allowed in section tag names, while special characters *are* allowed in key names.
+7. Spaces are not allowed in key names or section tags. Only `a-z`(case insensitive), `0-9`, `_`, and `-` are allowed in section tag names, while other special characters *are* allowed in key names.
 8. Values can consist of any character except `#`. Leading and trailing whitespace is removed.
 
 ## INI
@@ -437,4 +437,6 @@ Output (`examples/php_ini.secsie.conf`):
 
 
 ```
-Blank values were commented out. If you disagree with that, *MAKE 'EM NULL*!
+You should notice 2 things: 
+1. Keys and value assignments are separated by an equals sign with a space ON BOTH SIDES! `key = value`, **NOT** `key=value`. That is ugly and lazy. This ain't minified JS, son. [They make things for that...](https://www.amazon.com/dp/B089C3TZL9)
+2. Blank values were commented out. If you disagree with that, *MAKE 'EM NULL*! `key = ` doesn't say anything.

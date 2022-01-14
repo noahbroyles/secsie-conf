@@ -26,7 +26,7 @@ from pathlib import Path
 
 MODES = {
     "secsie": dict(
-        SECTION_EX = re.compile(r'\[([a-zA-Z0-9_]+)\]'),
+        SECTION_EX = re.compile(r'\[([a-zA-Z0-9_-]+)\]'),
         FLOAT_EX = re.compile(r'^([-]?\d+[\.]\d*)$'),
         FALSE_EX = re.compile(r'^(false|no)$', re.IGNORECASE),
         NULL_EX = re.compile(r'^null$', re.IGNORECASE),

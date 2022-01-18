@@ -9,6 +9,7 @@ The `secsie` language format is very similar to `ini`, except just a little bett
 - easier to read
 - faster to write
 - no special syntax required for strings vs ints, floats, bools, etc.
+- file size usually smaller than readable JSON
 
 
 ## Secsie Language Contructs

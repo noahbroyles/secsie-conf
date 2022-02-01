@@ -58,14 +58,15 @@ def _write_to_conf_(conf: dict, line, line_number: int, section=None, mode: str 
         raise InvalidSyntax(f'"{line}" - bad section descriptor or value assignment', line_number)
 
     key, value = key_value[0], '='.join(key_value[1:])  # We want to allow '=' in our values
+
+    if ' ' in key:
+        raise InvalidSyntax("spaces not allowed in keys", line_number)
+
     if mode == 'ini':
         # Attempt to get ini strings right
         if value.startswith('"'):
             # This is an ini string, we need to remove the quotes
             value = value.strip('"')
-
-    if ' ' in key:
-        raise InvalidSyntax("spaces not allowed in keys", line_number)
 
     if MODES[mode]["FLOAT_EX"].match(value):
         value = float(value)

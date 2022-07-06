@@ -16,7 +16,7 @@ I also wrote a version for Java, which is available at [github.com/noahbroyles/s
 
 ## Secsie Language Contructs
 These are the rules of the secsie config language:
-1. Comment lines begin with `#` or `;`, but inline comments can only begin with the octothorpe (`#`).
+1. Comment lines begin with `#` or `;`, but inline comments can only begin with the octothorpe (`#`) and _must_ have a space preceeding them.
 2. Whitespace is ignored everywhere except in key names and section tag names.
 3. A config file consists of sections and attributes(keys and values).
 4. A section ends where the next section begins. Attributes declared before sections are valid.

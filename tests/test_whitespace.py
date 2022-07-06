@@ -20,3 +20,16 @@ ur\t=cute
     assert config['key2'] == 'value2'
     assert config['ur'] == 'cute'
     assert config['space-values'] == 'this      should be chilll     bro'
+
+
+def test_comment_support():
+    """
+    Tests that secsie ignores octothorpes in values
+    """
+    config = secsie.parse_config(
+    """
+    password = som#$scure # this should be amazing
+    """
+    )
+
+    assert config['password'] == 'som#$scure'

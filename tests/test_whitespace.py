@@ -6,7 +6,7 @@ def test_whitespace_insensitivity():
     Tests that secsie ignores whitespace in attribute declaration lines
     """
     config = secsie.parse_config(
-    """
+        """
 key    =     value
 
 
@@ -27,7 +27,7 @@ def test_comment_support():
     Tests that secsie ignores octothorpes in values
     """
     config = secsie.parse_config(
-    """
+        """
     password = som#$scure # this should be amazing
     """
     )

@@ -1,13 +1,12 @@
 import secsie
 
 
-
 def test_null():
     """
     Tests that secsie recognizes 'null' values in config and parses to None in Python.
     """
     config = secsie.parse_config(
-    """
+        """
     not-null = none  # none is not converted to None in Python, 'null' is.
     nowl = null
     NOWL = NULL
@@ -23,7 +22,7 @@ def test_true():
     Tests that secsie recognizes and parses 'truthy' values
     """
     config = secsie.parse_config(
-    """
+        """
     true = true
     true4u = True
     true2 = yes
@@ -41,7 +40,7 @@ def test_false():
     Tests that secsie recognizes and parses 'falsey' values
     """
     config = secsie.parse_config(
-    """
+        """
     false = false
     false4u = False
     false2 = no
@@ -58,7 +57,7 @@ def test_false():
 
 def test_numerics():
     config = secsie.parse_config(
-    """
+        """
     int = 42
     negative-int = -42
     float = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679

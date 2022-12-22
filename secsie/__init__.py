@@ -10,7 +10,7 @@ A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
 
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 __author__ = 'Noah Broyles'
 __all__ = [
     'InvalidSyntax',
@@ -52,6 +52,11 @@ class InvalidSyntax(SyntaxError):
 
 
 def _write_to_conf_(conf: dict, line, line_number: int, section=None, mode: str = 'secsie') -> dict:
+    """
+    INTENDED FOR INTERNAL USE ONLY
+
+    Reads a line from a config language and processes it by writing it to the current config dictionary
+    """
     key_value = [c.strip() for c in line.split('=')]
 
     if len(key_value) < 2:
@@ -90,6 +95,13 @@ def _write_to_conf_(conf: dict, line, line_number: int, section=None, mode: str 
 
 
 def parse_config(config: str, mode: str = 'secsie') -> dict:
+    """
+    Parse a string containing configuration text and return a dictionary of config keys and values.
+
+    :param config: The config to parse
+    :param mode: Determines what configuration language is being used. Can be either 'secsie' or 'ini'
+    :return: The config as a dict
+    """
     lines = config.split('\n')
     conf = {}
 
@@ -115,7 +127,11 @@ def parse_config(config: str, mode: str = 'secsie') -> dict:
 
 def parse_config_file(conf_file: str, mode: str = 'secsie') -> dict:
     """
-    Reads a config file and returns a dictionary of the values inside.
+    Read a config file and return a dictionary of the values inside.
+
+    :param conf_file: A file path to a configuration file
+    :param mode: The language of the config file, 'secsie' or 'ini' are supported
+    :return: The config as a dict
     """
     with open(conf_file, 'r') as f:
         config = f.read()
@@ -124,10 +140,14 @@ def parse_config_file(conf_file: str, mode: str = 'secsie') -> dict:
 
 
 def generate_config(conf_obj: dict) -> str:
-    """Generates and returns a valid config from an object.
+    """Generate and return a valid config from an object.
     Will save the config if an output file is passed.
     
-    This WILL NOT write valid .ini files, so don't even try. The only output format is secsie."""
+    This WILL NOT currently write valid .ini files, so don't even try. The only output format is secsie.
+
+    :param conf_obj: The dictionary to parse into a configuration language string
+    :return: a string of configuration code
+    """
 
     conf = ''
     for key, value in conf_obj.items():
@@ -143,6 +163,12 @@ def generate_config(conf_obj: dict) -> str:
 
 
 def generate_config_file(conf_obj: dict, output_file: str):
+    """
+    Generate and write a config file from a dictionary of keys and values
+
+    :param conf_obj: The dictionary to render into the secsie config language
+    :param output_file: The file to write to
+    """
     output_file = Path(output_file)
     conf = generate_config(conf_obj)
 

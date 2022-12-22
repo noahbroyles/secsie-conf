@@ -10,7 +10,7 @@ A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
 
-__version__ = '2.1.3'
+__version__ = '2.1.4'
 __author__ = 'Noah Broyles'
 __all__ = [
     'InvalidSyntax',
@@ -102,7 +102,7 @@ def parse_config(config: str, mode: str = 'secsie') -> dict:
     :param mode: Determines what configuration language is being used. Can be either 'secsie' or 'ini'
     :return: The config as a dict
     """
-    lines = config.split('\n')
+    lines = [line.strip() for line in config.split('\n')]
     conf = {}
 
     c_section = None

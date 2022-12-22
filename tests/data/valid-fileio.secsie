@@ -16,4 +16,5 @@ before_section = totally okay I hope!
 
 [anotherSection]
     # The indent here is optional, included for readability
+    ; This comment shouldn't cause any issues
     sections = are amazing

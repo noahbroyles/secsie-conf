@@ -30,7 +30,7 @@ These are the rules of the secsie config language:
 key = value
 ```
 7. Spaces are not allowed in key names or section tags. Only `a-z`(case insensitive), `0-9`, `_`, and `-` are allowed in section tag names, while other special characters *are* allowed in key names.
-8. Values can consist of any character except `#`. Leading and trailing whitespace is removed.
+8. Values can consist of any character except `#`. Leading and trailing whitespace is removed. String values separated by commas are interpreted as lists.
 
 ## INI
 `secsie-conf` can be used to read `.ini` files, as long as the mode `ini` is specifed to the parser. The rules of interpretation for `.ini` files vary slightly.

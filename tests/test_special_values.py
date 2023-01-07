@@ -26,13 +26,13 @@ def test_true():
     true = true
     true4u = True
     true2 = yes
-    not-true = yes, but like also no
+    not-true = yes but like also no
     """)
 
     assert config['true'] is True
     assert config['true4u'] is True
     assert config['true2'] is True
-    assert config['not-true'] == 'yes, but like also no'
+    assert config['not-true'] == 'yes but like also no'
 
 
 def test_false():
@@ -44,14 +44,14 @@ def test_false():
     false = false
     false4u = False
     false2 = no
-    not-false = no, but like also maybe
+    not-false = no but like also maybe
     wow_okay = no no NO
     """)
 
     assert config['false'] is False
     assert config['false4u'] is False
     assert config['false2'] is False
-    assert config['not-false'] == 'no, but like also maybe'
+    assert config['not-false'] == 'no but like also maybe'
     assert config['wow_okay'] == 'no no NO'
 
 

@@ -54,6 +54,12 @@ class InvalidSyntax(SyntaxError):
         self.lineno = line_number
 
 def _parse_value(value: str, mode: str = 'secsie') -> Any:
+    """
+    INTENDED FOR INTERNAL USE ONLY
+
+    Determine whether a value is of a special type. If so, will convert the value to that type and return it.
+    If not, will return the original value.
+    """
     if MODES[mode]["FLOAT_EX"].match(value):
         return float(value)
     elif MODES[mode]["INT_EX"].match(value):
@@ -68,7 +74,7 @@ def _parse_value(value: str, mode: str = 'secsie') -> Any:
         # This is a comma separated list of items
         return [_parse_value(v.strip()) for v in value.split(',')]
     else:
-        # The value is not special, it's just a string
+        # The value is not special, it's just a regular string
         return value
 
 

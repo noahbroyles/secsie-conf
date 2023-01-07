@@ -72,7 +72,7 @@ def _parse_value(value: str, mode: str = 'secsie') -> Any:
         return False
     elif ',' in value:
         # This is a comma separated list of items
-        return [_parse_value(v.strip()) for v in value.split(',')]
+        return [_parse_value(v.strip()) for v in value.split(',') if ((mode == 'ini' and len(v.strip()) > 0) or (mode == 'secsie'))]
     else:
         # The value is not special, it's just a regular string
         return value

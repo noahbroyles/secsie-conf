@@ -10,7 +10,7 @@ A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
 
-__version__ = '2.1.4'
+__version__ = '3.0.0'
 __author__ = 'Noah Broyles'
 __all__ = [
     'InvalidSyntax',
@@ -21,7 +21,10 @@ __all__ = [
 ]
 
 import re
+
+from typing import Any
 from pathlib import Path
+
 
 MODES = {
     "secsie": dict(
@@ -50,6 +53,24 @@ class InvalidSyntax(SyntaxError):
         super().__init__(f"Invalid syntax on line {line_number}: {error_message}")
         self.lineno = line_number
 
+def _parse_value(value: str, mode: str = 'secsie') -> Any:
+    if MODES[mode]["FLOAT_EX"].match(value):
+        return float(value)
+    elif MODES[mode]["INT_EX"].match(value):
+        return int(value)
+    elif MODES[mode]["NULL_EX"].match(value):
+        return None
+    elif MODES[mode]["TRUE_EX"].match(value):
+        return True
+    elif MODES[mode]["FALSE_EX"].match(value):
+        return False
+    elif ',' in value:
+        # This is a comma separated list of items
+        return [_parse_value(v.strip()) for v in value.split(',')]
+    else:
+        # The value is not special, it's just a string
+        return value
+
 
 def _write_to_conf_(conf: dict, line, line_number: int, section=None, mode: str = 'secsie') -> dict:
     """
@@ -73,17 +94,10 @@ def _write_to_conf_(conf: dict, line, line_number: int, section=None, mode: str 
             # This is an ini string, we need to remove the quotes
             value = value.strip('"')
 
-    if MODES[mode]["FLOAT_EX"].match(value):
-        value = float(value)
-    elif MODES[mode]["INT_EX"].match(value):
-        value = int(value)
-    elif MODES[mode]["NULL_EX"].match(value):
-        value = None
-    elif MODES[mode]["TRUE_EX"].match(value):
-        value = True
-    elif MODES[mode]["FALSE_EX"].match(value):
-        value = False
+    # Determine if the value is of a special type
+    value = _parse_value(value, mode)
 
+    # Store the value in the config dictionary, under the appropriate section, if any
     if section is None:
         conf[key] = value
     else:

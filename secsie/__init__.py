@@ -174,9 +174,14 @@ def generate_config(conf_obj: dict) -> str:
         if isinstance(value, dict):
             conf += f"\n[{key.replace(' ', '')}]\n"
             for k, v in value.items():
-                conf += f"{';' if v == '' else ''}\t{k} = {v}\n"
+                if isinstance(v, list):
+                    conf += f'\t{k} = {", ".join(v)}\n'
+                else:
+                    conf += f"{';' if v == '' else ''}\t{k} = {v}\n"
             conf += "\n"
             continue
+        elif isinstance(value, list):
+            conf += f'{key} = {", ".join(value)}\n'
         conf += f"{key} = {value}\n"
 
     return conf

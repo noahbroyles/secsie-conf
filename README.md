@@ -5,18 +5,18 @@ pip3 install secsie-conf
 Secsie is a configuration language parser for Python, made for speed and beauty. Instead of writing config files in JSON (don't get me wrong, JSON is *FAR* better than a lot of other things you could use (cough cough XML)), you can save time writing your config files in `secsie`.  
 The `secsie` language format is very similar to `ini`, except just a little better. You can use `secsie-conf` to read `.ini` files into Python `dict`s. `secsie-conf` will NOT write `.ini` files however, at least at this stage.  
 
-I also wrote a version for Java, which is available at [github.com/noahbroyles/secsie-java](https://github.com/noahbroyles/secsie-java). You can use it to parse `.properties` files. Minecraft will probably adopt this in the next few months for thier `server.properties` ;)  
+I also wrote a version for Java, which is available at [github.com/noahbroyles/secsie-java](https://github.com/noahbroyles/secsie-java). You can use it to parse `.properties` files. Minecraft will probably adopt this in the next few months for their `server.properties` ;)  
 
 ### Advantages over JSON:
 - easier to read
-- faster to write
+- faster and more natural to write
 - no special syntax required for strings vs ints, floats, bools, etc.
 - file size usually smaller than readable JSON
 
 
-## Secsie Language Contructs
+## Secsie Language Constructs
 These are the rules of the secsie config language:
-1. Comment lines begin with `#` or `;`, but inline comments can only begin with the octothorpe (`#`) and _must_ have a space preceeding them.
+1. Comment lines begin with `#` or `;`, but inline comments can only begin with the octothorpe (`#`) and _must_ have a space preceding them.
 2. Whitespace is ignored everywhere except in key names and section tag names.
 3. A config file consists of sections and attributes(keys and values).
 4. A section ends where the next section begins. Attributes declared before sections are valid.
@@ -37,10 +37,11 @@ key = value
 ### Differences:
 - Section names are allowed to contain spaces and dashes
 - quoted strings are valid, but the quotes are removed (there is no need to quote string in `secsie` ;)  
+- Lists in `.ini` files can have a trailing comma with no effect, but a trailing comma in `secsie` will create a blank string  
 `secsie-conf` can **NOT** be used to write `.ini` files. You can read an `.ini` file and output it in valid `secsie`, but you cannot expect valid `.ini` output.
 
 ## Valid values
-Secsie supports strings, ints, floats, null types, and booleans. All of these types can be written out by themselves and will automatically be converted to the appropriate native type.
+Secsie supports strings, ints, floats, null types, booleans, and lists. Most of these types can be written out by themselves and will automatically be converted to the appropriate native type. Lists require comma separation.
 ### Strings:
 ```ini
 # Spaces are allowed in string value
@@ -54,6 +55,11 @@ numb = 42  # Automatically converted to int when parsed
 ```ini
 pi = 3.14159265  # Automatically converted to float when parsed
 ```
+### Null type (`None`):
+```ini
+# 'null' is used as the NoneType (case insensitive)
+nothing = null
+```
 ### Booleans:
 ```ini
 # True and yes are truthy values (case insensitive)
@@ -65,10 +71,10 @@ untruth = falsE
 untruth2 = False
 untruth3 = no
 ```
-### Null type (`None`):
+### Lists:
 ```ini
-# 'null' is used as the NoneType (case insensitive)
-nothing = null
+# To interpret a value as a list, you must separate the list values with a comma.
+list = this, that, the other
 ```
 
 ## Examples
@@ -89,7 +95,10 @@ before_section = totally okay
     true = true
     ; I don't encourage this but it's valid ;)
     false = FaLSe
-
+    
+    # this following will be interpreted as a list
+    coolKids = jim, bill, bob, alice, 42
+    
     # Null value
     nah = Null
 
@@ -100,7 +109,7 @@ before_section = totally okay
 ```
 Parse result:
 ```python
-{'before_section': 'totally okay', 'special_values': {'int': 42, 'float': 269.887, 'truth': True, 'falsehood': False, 'true': True, 'false': False, 'nah': None}, 'anotherSection': {'sections': 'are amazing'}}
+{'before_section': 'totally okay', 'special_values': {'int': 42, 'float': 269.887, 'truth': True, 'falsehood': False, 'true': True, 'false': False, 'coolKids': ['jim', 'bill', 'bob', 'alice', 42], 'nah': None}, 'anotherSection': {'sections': 'are amazing'}}
 ```
 
 ## Module Usage
@@ -124,6 +133,13 @@ Result:
     "falsehood": false,
     "true": true,
     "false": false,
+    "coolKids": [
+      "jim",
+      "bill",
+      "bob",
+      "alice",
+      42
+    ],
     "nah": null
   },
   "anotherSection": {
@@ -140,16 +156,15 @@ import secsie
 config = secsie.parse_config_file('examples/php.ini')
 ```
 Result:
-```python
-...Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "/home/nbroyles/PycharmProjects/secsie-conf/secsie/__init__.py", line 109, in parse_config_file
-    conf = _write_to_conf_(conf, line, line_number=lineno, section=c_section, mode=mode)
-  File "/home/nbroyles/PycharmProjects/secsie-conf/secsie/__init__.py", line 63, in _write_to_conf_
-    raise InvalidSyntax(f'Syntax Error on line {line_number}: "{line}" bad section descriptor or value assignment')
-secsie.InvalidSyntax: Syntax Error on line 955: "[CLI Server]" bad section descriptor or value assignment
+```console
+Traceback (most recent call last):
+  ...
+  File "/Users/nbroyles/PycharmProjects/secsie-conf/secsie/__init__.py", line 90, in _write_to_conf_
+    raise InvalidSyntax(f'"{line}" - bad section descriptor or value assignment', line_number)
+  File "<string>", line 955
+secsie.InvalidSyntax: Invalid syntax on line 955: "[CLI Server]" - bad section descriptor or value assignment
 ```
-We can see that this up and broke. Dub tee eff?! Actually, its okay. Spaces aren't allowed in `secsie` section names, remember? When reading an `.ini` file, we need to pass the argument `mode='ini'` to the `parse_config_file` function, like this:  
+We can see that this up and broke. WTF?! Actually, it's okay. Spaces aren't allowed in `secsie` section names, remember? When reading an `.ini` file, we need to pass the argument `mode='ini'` to the `parse_config_file` function, like this:  
 ```python
 config = secsie.parse_config_file('examples/php.ini', mode='ini')
 print(json.dumps(config, indent=2))
@@ -165,7 +180,32 @@ print(json.dumps(config, indent=2))
     "implicit_flush": "Off",
     "unserialize_callback_func": "",
     "serialize_precision": -1,
-    "disable_functions": "pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,pcntl_unshare,",
+    "disable_functions": [
+      "pcntl_alarm",
+      "pcntl_fork",
+      "pcntl_waitpid",
+      "pcntl_wait",
+      "pcntl_wifexited",
+      "pcntl_wifstopped",
+      "pcntl_wifsignaled",
+      "pcntl_wifcontinued",
+      "pcntl_wexitstatus",
+      "pcntl_wtermsig",
+      "pcntl_wstopsig",
+      "pcntl_signal",
+      "pcntl_signal_get_handler",
+      "pcntl_signal_dispatch",
+      "pcntl_get_last_error",
+      "pcntl_strerror",
+      "pcntl_sigprocmask",
+      "pcntl_sigwaitinfo",
+      "pcntl_sigtimedwait",
+      "pcntl_exec",
+      "pcntl_getpriority",
+      "pcntl_setpriority",
+      "pcntl_async_signals",
+      "pcntl_unshare"
+    ],
     "disable_classes": "",
     "zend.enable_gc": "On",
     "zend.exception_ignore_args": "On",
@@ -262,11 +302,16 @@ print(json.dumps(config, indent=2))
     "session.gc_divisor": 1000,
     "session.gc_maxlifetime": 1440,
     "session.referer_check": "",
-    "session.cache_limiter": false,
+    "session.cache_limiter": "nocache",
     "session.cache_expire": 180,
     "session.use_trans_sid": 0,
     "session.sid_length": 26,
-    "session.trans_sid_tags": "a=href,area=href,frame=src,form=",
+    "session.trans_sid_tags": [
+      "a=href",
+      "area=href",
+      "frame=src",
+      "form="
+    ],
     "session.sid_bits_per_character": 5
   },
   "Assertion": {
@@ -296,7 +341,6 @@ Output (`examples/php_ini.secsie.conf`):
 ```ini
 # php_ini.secsie.conf auto-generated by secsie
 
-
 [PHP]
 	engine = On
 	short_open_tag = Off
@@ -306,7 +350,7 @@ Output (`examples/php_ini.secsie.conf`):
 	implicit_flush = Off
 ;	unserialize_callback_func = 
 	serialize_precision = -1
-	disable_functions = pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,pcntl_unshare,
+	disable_functions = pcntl_alarm, pcntl_fork, pcntl_waitpid, pcntl_wait, pcntl_wifexited, pcntl_wifstopped, pcntl_wifsignaled, pcntl_wifcontinued, pcntl_wexitstatus, pcntl_wtermsig, pcntl_wstopsig, pcntl_signal, pcntl_signal_get_handler, pcntl_signal_dispatch, pcntl_get_last_error, pcntl_strerror, pcntl_sigprocmask, pcntl_sigwaitinfo, pcntl_sigtimedwait, pcntl_exec, pcntl_getpriority, pcntl_setpriority, pcntl_async_signals, pcntl_unshare
 ;	disable_classes = 
 	zend.enable_gc = On
 	zend.exception_ignore_args = On
@@ -412,11 +456,11 @@ Output (`examples/php_ini.secsie.conf`):
 	session.gc_divisor = 1000
 	session.gc_maxlifetime = 1440
 ;	session.referer_check = 
-	session.cache_limiter = False
+	session.cache_limiter = nocache
 	session.cache_expire = 180
 	session.use_trans_sid = 0
 	session.sid_length = 26
-	session.trans_sid_tags = a=href,area=href,frame=src,form=
+	session.trans_sid_tags = a=href, area=href, frame=src, form=
 	session.sid_bits_per_character = 5
 
 

@@ -1,4 +1,5 @@
 # secsie-conf
+[![PyPi Deployment](https://github.com/noahbroyles/secsie-conf/actions/workflows/deploy-to-pypi.yaml/badge.svg?event=release)](https://github.com/noahbroyles/secsie-conf/actions/workflows/deploy-to-pypi.yaml)
 ```console
 pip3 install secsie-conf
 ```

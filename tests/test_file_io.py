@@ -9,6 +9,6 @@ def test_parse_ini_file():
 
 
 def test_read_secsie_file():
-    config = secsie.parse_config_file('tests/data/valid-fileio.secsie')
+    config = secsie.parse_config_file("tests/data/valid-fileio.secsie")
 
-    assert config['bluepill-database-configuration']['port'] == 2669
+    assert config["bluepill-database-configuration"]["port"] == 2669

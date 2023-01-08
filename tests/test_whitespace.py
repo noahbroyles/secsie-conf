@@ -16,10 +16,10 @@ ur\t=cute
     """
     )
 
-    assert config['key'] == 'value'
-    assert config['key2'] == 'value2'
-    assert config['ur'] == 'cute'
-    assert config['space-values'] == 'this      should be chilll     bro'
+    assert config["key"] == "value"
+    assert config["key2"] == "value2"
+    assert config["ur"] == "cute"
+    assert config["space-values"] == "this      should be chilll     bro"
 
 
 def test_comment_support():
@@ -32,4 +32,4 @@ def test_comment_support():
     """
     )
 
-    assert config['password'] == 'som#$scure'
+    assert config["password"] == "som#$scure"

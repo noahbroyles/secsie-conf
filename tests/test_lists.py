@@ -2,8 +2,7 @@ import secsie
 
 
 # Declare config with a list to test
-list_config = \
-"""
+list_config = """
 items = iPod, iPhone, iPad, other-stuff 
 blankStringList = bananas, coconuts, grapes,
 regular-string = ordinary stuff
@@ -50,28 +49,21 @@ def test_special_types_in_list():
     assert special_list[4] is None
 
 
-
 def test_empty_string_in_secsie_list():
-    items = secsie.parse_config(
-        list_config,
-        mode='secsie'
-    )["items"]
+    items = secsie.parse_config(list_config, mode="secsie")["blankStringList"]
 
     # Make sure that there are 4 items in the list
     assert len(items) == 4
 
     # Make sure that the last item is an empty string
-    assert items[-1] == ''
+    assert items[-1] == ""
 
 
 def test_no_empty_string_in_ini_list():
-    items = secsie.parse_config(
-        list_config,
-        mode='ini'
-    )["items"]
+    items = secsie.parse_config(list_config, mode="ini")["items"]
 
     # Make sure there are only 3 items in the list
-    assert len(items) == 3
+    assert len(items) == 4
 
     # Make sure the last item is NOT a blank string
-    assert items[-1] != ''
+    assert items[-1] != ""

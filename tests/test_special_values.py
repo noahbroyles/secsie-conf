@@ -7,10 +7,11 @@ def test_null():
     """
     config = secsie.parse_config(
         """
-    not-null = none  # none is not converted to None in Python, 'null' is.
-    nowl = null
-    NOWL = NULL
-    """)
+        not-null = none  # none is not converted to None in Python, 'null' is.
+        nowl = null
+        NOWL = NULL
+        """
+    )
 
     assert config['not-null'] == 'none'
     assert config['nowl'] is None

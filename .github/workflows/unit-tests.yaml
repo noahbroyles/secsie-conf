@@ -38,7 +38,4 @@ jobs:
 
     - name: Test with pytest
       run: |
-        PYTHONPATH="$(pwd)"
-        pwd
-        ls
         python -m pytest

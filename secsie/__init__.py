@@ -9,9 +9,9 @@ r"""
 A small library for parsing configuration files.
 Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
 """
-from secsie.exceptions import InvalidSyntax
-from secsie.parser import parse_config, parse_config_file
-from secsie.generator import generate_config, generate_config_file
+from .exceptions import InvalidSyntax
+from .parser import parse_config, parse_config_file
+from .generator import generate_config, generate_config_file
 
 
 __version__ = '3.0.2'

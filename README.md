@@ -9,7 +9,6 @@ pip3 install secsie-conf
 Secsie is a configuration language parser for Python, made for speed and beauty. Instead of writing config files in JSON (don't get me wrong, JSON is *FAR* better than a lot of other things you could use (cough cough XML)), you can save time writing your config files in `secsie`.  
 The `secsie` language format is very similar to `ini`, except just a little better. You can use `secsie-conf` to read `.ini` files into Python `dict`s. `secsie-conf` will NOT write `.ini` files however, at least at this stage.  
 
-I also wrote a version for Java, which is available at [github.com/noahbroyles/secsie-java](https://github.com/noahbroyles/secsie-java). You can use it to parse `.properties` files. Minecraft will probably adopt this in the next few months for their `server.properties` ;)  
 
 ### Advantages over JSON:
 - easier to read

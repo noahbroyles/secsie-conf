@@ -14,7 +14,7 @@ from .parser import parse_config, parse_config_file
 from .generator import generate_config, generate_config_file
 
 
-__version__ = '3.1.1'
+__version__ = '3.1.2'
 __author__ = 'Noah Broyles'
 __all__ = [
     'InvalidSyntax',

@@ -4,9 +4,9 @@ parser.py
 Contains code relative to parsing configuration language.
 """
 from typing import Any
-
-from secsie import InvalidSyntax
 from secsie.modes import MODES
+from secsie import InvalidSyntax
+
 
 
 def _parse_value(value: str, mode: str = 'secsie') -> Any:

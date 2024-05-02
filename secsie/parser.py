@@ -3,10 +3,12 @@ parser.py
 
 Contains code relative to parsing configuration language.
 """
+from __future__ import annotations
+
 from typing import Any
+from os import PathLike
 from secsie.modes import MODES
 from secsie import InvalidSyntax
-
 
 
 def _parse_value(value: str, mode: str = 'secsie') -> Any:
@@ -101,7 +103,7 @@ def parse_config(config: str, mode: str = 'secsie') -> dict:
     return conf
 
 
-def parse_config_file(conf_file: str, mode: str = 'secsie') -> dict:
+def parse_config_file(conf_file: str | PathLike, mode: str = 'secsie') -> dict:
     """
     Read a config file and return a dictionary of the values inside.
 

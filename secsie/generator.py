@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from os import PathLike
 from pathlib import Path
 
 
@@ -30,7 +33,7 @@ def generate_config(conf_obj: dict) -> str:
     return conf
 
 
-def generate_config_file(conf_obj: dict, output_file: str):
+def generate_config_file(conf_obj: dict, output_file: str | PathLike):
     """
     Generate and write a config file from a dictionary of keys and values
 

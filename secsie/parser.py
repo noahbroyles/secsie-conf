@@ -52,24 +52,27 @@ def _write_to_conf_(conf: dict, line, line_number: int, section=None, mode: str 
     if ' ' in key:
         raise InvalidSyntax("spaces not allowed in keys", line_number)
 
+
+    def _store_in_conf(val):
+        # Store the value in the config dictionary, under the appropriate section, if any
+        if section is None:
+            conf[key] = val
+        else:
+            if not conf.get(section, False):
+                conf[section] = {}
+            conf[section][key] = val
+        return conf
+
     if mode == 'ini':
         # Attempt to get ini strings right
         if value.startswith('"'):
             # This is an ini string, we need to remove the quotes
             value = value.strip('"')
+            # At this point, we should not parse any farther.
+            return _store_in_conf(value)
 
     # Determine if the value is of a special type
-    value = _parse_value(value, mode)
-
-    # Store the value in the config dictionary, under the appropriate section, if any
-    if section is None:
-        conf[key] = value
-    else:
-        if not conf.get(section, False):
-            conf[section] = {}
-        conf[section][key] = value
-
-    return conf
+    return _store_in_conf(_parse_value(value, mode))
 
 
 def parse_config(config: str, mode: str = 'secsie') -> dict:

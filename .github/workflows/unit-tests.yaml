@@ -8,11 +8,16 @@ on:
     paths:
       - 'secsie/**'
       - 'tests/**'
+      - 'setup.py'
       - '.github/workflows/unit-tests.yaml'
   pull_request:
     paths:
       - 'secsie/**'
       - 'tests/**'
+      - 'setup.py'
+      - '.github/workflows/unit-tests.yaml'
+  # Lets the deploy workflow run these same tests before it publishes anything
+  workflow_call:
 
 
 jobs:
@@ -40,3 +45,11 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest
+
+    # After the tests, so the build files this leaves behind can't get in their way
+    - name: Check that the package installs
+      run: |
+        python -m pip install .
+        # Move out of the checkout, so that it is the installed package that gets imported and not the source folder
+        cd "$RUNNER_TEMP"
+        python -c "import secsie; print(secsie.__file__, secsie.__version__)"

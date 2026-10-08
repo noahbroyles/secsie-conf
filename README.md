@@ -7,7 +7,7 @@
 pip3 install secsie-conf
 ```
 Secsie is a configuration language parser for Python, made for speed and beauty. Instead of writing config files in JSON (don't get me wrong, JSON is *FAR* better than a lot of other things you could use (cough cough XML)), you can save time writing your config files in `secsie`.  
-The `secsie` language format is very similar to `ini`, except just a little better. You can use `secsie-conf` to read `.ini` files into Python `dict`s. `secsie-conf` will NOT write `.ini` files however, at least at this stage.  
+The `secsie` language format is very similar to `ini`, except just a little better. You can use `secsie-conf` to read `.ini` files into Python `dict`s. `secsie-conf` can write `.ini` files too, see [Write an `.ini` file](#write-an-ini-file).  
 
 
 ### Advantages over JSON:
@@ -41,7 +41,7 @@ key = value
 - Section names are allowed to contain spaces
 - quoted strings are valid, but the quotes are removed (there is no need to quote string in `secsie` ;). A quoted value is always kept as a string, so `"42"` stays a string and `"a,b"` is not split into a list  
 - Lists in `.ini` files can have a trailing comma with no effect, but a trailing comma in `secsie` will create a blank string  
-`secsie-conf` can **NOT** be used to write `.ini` files. You can read an `.ini` file and output it in valid `secsie`, but you cannot expect valid `.ini` output.
+`secsie-conf` can also write the `ini` dialect described here, see [Write an `.ini` file](#write-an-ini-file).
 
 ## Valid values
 Secsie supports strings, ints, floats, null types, booleans, and lists. Most of these types can be written out by themselves and will automatically be converted to the appropriate native type. Lists require comma separation.
@@ -87,7 +87,7 @@ list = this, that, the other
 - Strings containing a comma, which are read as lists.
 - Strings containing a space followed by `#`, which start an inline comment.
 
-If your program needs one of these as a string, convert it after reading, for example `str(config['zip']).zfill(5)`. Only `ini` mode understands quotes (see above), since it exists to read existing `.ini` files.
+If your program needs one of these as a string, convert it after reading, for example `str(config['zip']).zfill(5)`. Only `ini` mode understands quotes (see above), since it exists to read existing `.ini` files. If you need to *write* values like these, [`ini` mode](#write-an-ini-file) quotes them for you.
 
 ## Examples
 `examples/valid.secsie.conf`:
@@ -493,7 +493,19 @@ You should notice 2 things:
 
 Also note that `trans_sid_tags` went in as a quoted ini string, and came out as a plain `a=href,area=href,frame=src,form=`. Since a comma means "list" in `secsie`, this will read back as a list. See the limits below.
 
-### What the generator can and can't write
+### Change the header
+`generate_config_file` starts every file with a comment saying it was auto-generated. Use `header` to say something else, with one comment written for every line of your text, or pass an empty string to leave it out:
+```python
+secsie.generate_config_file(config, 'app.secsie', header="Managed by the deploy script.\n\nDo not edit by hand.")
+```
+```ini
+# Managed by the deploy script.
+#
+# Do not edit by hand.
+```
+`generate_config` only returns the config text, with no header at all. A header is always written as comments, so it can never change what the file is read back as.
+
+### What the generator can and can't write (`secsie` mode)
 Generating a config keeps your *data*, not the original file. Comments, blank lines, spacing, and spellings like `yes`/`no` (they come back as `true`/`false`) are not preserved, and `None` is written as `null`. A few things can't be represented in `secsie` at all, and the generator tells you instead of writing a config that reads back differently:
 - Nested dicts raise a `TypeError`. `secsie` only has one level of sections.
 - A string with a space followed by `#` raises a `ValueError`, since that would start an inline comment. A `#` with no space before it is fine.
@@ -501,3 +513,44 @@ Generating a config keeps your *data*, not the original file. Comments, blank li
 Empty strings are commented out (see 2 above), so they are not present when the config is parsed again. Strings containing a comma are written as is, so they are read back as lists.
 
 Keys that aren't in a section are always written before the first section, whatever order they have in your `dict`. A section only ends where the next one begins, so a key written after a section would be read back as part of it.
+
+### Write an `.ini` file
+Pass `mode='ini'` to write the same `ini` dialect that `mode='ini'` reads:
+```python
+config = {
+    "app_name": "my app",
+    "debug": False,
+    "Database": {"host": "localhost", "port": 5432, "password": "p#ss", "zip": "02134", "tags": ["a", "b"], "motto": "work, play"},
+}
+print(secsie.generate_config(config, mode='ini'))
+# or: secsie.generate_config_file(config, 'my_settings.ini', mode='ini')
+```
+```ini
+app_name = my app
+debug = false
+
+[Database]
+host = localhost
+port = 5432
+password = p#ss
+zip = "02134"
+tags = a, b
+motto = "work, play"
+```
+There is no one `.ini` standard (PHP, Python's `configparser`, and Windows all disagree on the details), so the promise is a narrow one: **reading the result with `mode='ini'` gives you back exactly the data you wrote.** Nothing more is promised about other programs, though the output is plain `key = value` lines that most of them will read.
+
+How it differs from `secsie` mode:
+- Strings that would otherwise change are quoted: ones that look like a number, a boolean, or `null` (`"02134"`), ones with a comma (`"work, play"`), empty ones (`""`), and ones with leading or trailing whitespace. Everything else is written plain. Quoted values are kept as strings when read (see the `ini` differences above).
+- Empty strings are written as `""` and read back, instead of being commented out.
+- Section names can have spaces (`[CLI Server]`) and are never changed.
+- Keys in a section are not indented unless you pass `indent`. As in `secsie` mode, top level keys are written first.
+- `generate_config_file` starts the file with a `;` comment (including a custom `header`) instead of a `#` one, because `;` is the comment character `ini` readers agree on.
+- Lists are written as `a, b`. A list with one item gets a trailing comma (`a,`) and an empty list is a lone comma (`,`), so they are still read as lists.
+
+Whatever can't be written faithfully raises an error that names the key and says why, so the file is never written with a different value than you gave. Besides nested dicts, these can not be written in `ini` mode:
+- strings with a space followed by `#`, a line break, or whitespace touching an `=` (the reader would change or cut them)
+- strings that start or end with a quote character (there is no way to escape a quote)
+- list items that are empty, have surrounding whitespace, contain a comma, or look like a number, boolean, or `null` (list items can't be quoted), or a list that starts with a quote
+- `inf` and `nan`, keys with whitespace or `=` or that start with `#` or `;`, and section names with anything other than letters, numbers, spaces, `_`, and `-`
+
+An empty section is written, but there is nothing in it for the reader to return, so it is not read back.

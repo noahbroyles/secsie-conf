@@ -4,12 +4,29 @@ from os import PathLike
 from pathlib import Path
 
 
+def _format_value(value) -> str:
+    """
+    INTENDED FOR INTERNAL USE ONLY
+
+    Render a single Python value the way the parser expects to read it back: None becomes `null` and bools become
+    `true`/`false`. Everything else is rendered with `str`.
+    """
+    if value is None:
+        return 'null'
+    if isinstance(value, bool):
+        return 'true' if value else 'false'
+    return str(value)
+
+
 def generate_config(conf_obj: dict, indent: str = '\t') -> str:
     """
     Generate and return a valid config from an object.
     Will save the config if an output file is passed.
 
     This WILL NOT currently write valid .ini files, so don't even try. The only output format is secsie.
+
+    Empty string values are written as commented out lines (at the top level and in sections), so they are not
+    present when the generated config is parsed again.
 
     :param conf_obj: The dictionary to parse into a configuration language string
     :param indent: The character(s) to use for indentation. Can be tab or spaces. Defaults to tab character, '\t'
@@ -22,15 +39,15 @@ def generate_config(conf_obj: dict, indent: str = '\t') -> str:
             conf += f"\n[{key.replace(' ', '')}]\n"
             for k, v in value.items():
                 if isinstance(v, list):
-                    conf += f'\t{k} = {", ".join(v)}\n'
+                    conf += f'\t{k} = {", ".join(_format_value(i) for i in v)}\n'
                 else:
-                    conf += f"{';' if v == '' else ''}{indent}{k} = {v}\n"
+                    conf += f"{';' if v == '' else ''}{indent}{k} = {_format_value(v)}\n"
             conf += "\n"
             continue
         elif isinstance(value, list):
-            conf += f'{key} = {", ".join(value)}\n'
+            conf += f'{key} = {", ".join(_format_value(i) for i in value)}\n'
             continue
-        conf +=f"{key} = {value}\n"
+        conf += f"{';' if value == '' else ''}{key} = {_format_value(value)}\n"
 
     return conf
 

@@ -12,8 +12,8 @@ To keep the writer and the reader from drifting apart, the checks below use the 
 """
 from __future__ import annotations
 
-import math
 import re
+import math
 from decimal import Decimal
 
 from secsie.modes import MODES

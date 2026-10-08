@@ -3,8 +3,8 @@ from __future__ import annotations
 from os import PathLike
 from pathlib import Path
 
-from secsie.ini_generator import generate_ini
 from secsie.modes import MODES
+from secsie.ini_generator import generate_ini
 
 
 def _format_value(value, where: str) -> str:

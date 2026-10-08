@@ -80,6 +80,15 @@ untruth3 = no
 list = this, that, the other
 ```
 
+## Limitations
+`secsie` has no quoting. A value is whatever you write, and its type is inferred from it, so quotes are just ordinary characters (`name = "Bob"` gives `'"Bob"'`, quotes included). This keeps the language simple, but it means some values can't be written as strings:
+- Digits that must stay text, like an account number or zip code with a leading zero. `090192837418` is read as the int `90192837418`.
+- Words that are special values, such as `true`, `no`, `yes`, and `null`.
+- Strings containing a comma, which are read as lists.
+- Strings containing a space followed by `#`, which start an inline comment.
+
+If your program needs one of these as a string, convert it after reading, for example `str(config['zip']).zfill(5)`. Only `ini` mode understands quotes (see above), since it exists to read existing `.ini` files.
+
 ## Examples
 `examples/valid.secsie.conf`:
 ```ini

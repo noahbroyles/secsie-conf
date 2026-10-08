@@ -31,6 +31,7 @@ def generate_config(conf_obj: dict, indent: str = '\t') -> str:
     :param conf_obj: The dictionary to parse into a configuration language string
     :param indent: The character(s) to use for indentation. Can be tab or spaces. Defaults to tab character, '\t'
     :return: a string of configuration code
+    :raises TypeError: if a section contains a dict, since secsie does not support nested dicts
     """
 
     conf = ''
@@ -38,7 +39,13 @@ def generate_config(conf_obj: dict, indent: str = '\t') -> str:
         if isinstance(value, dict):
             conf += f"\n[{key.replace(' ', '')}]\n"
             for k, v in value.items():
-                if isinstance(v, list):
+                if isinstance(v, dict):
+                    raise TypeError(
+                        f"Cannot generate config: '{key}.{k}' is a dict, but nested dicts are not supported. "
+                        f"Secsie only has one level of sections, so a section's values must be strings, numbers, "
+                        f"booleans, None, or lists."
+                    )
+                elif isinstance(v, list):
                     conf += f'\t{k} = {", ".join(_format_value(i) for i in v)}\n'
                 else:
                     conf += f"{';' if v == '' else ''}{indent}{k} = {_format_value(v)}\n"

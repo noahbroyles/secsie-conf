@@ -1,3 +1,4 @@
+import pytest
 import secsie
 
 
@@ -40,3 +41,11 @@ def test_empty_strings_are_commented_out():
     assert ";blank = \n" in generated
     assert ";\tblank = \n" in generated
     assert secsie.parse_config(generated) == {"kept": 1, "section": {"kept": 2}}
+
+
+def test_nested_dicts_raise_type_error():
+    """
+    Tests that a dict inside a section raises a clear error instead of generating a corrupt config
+    """
+    with pytest.raises(TypeError, match=r"'db\.options' is a dict.*nested dicts are not supported"):
+        secsie.generate_config({"db": {"host": "localhost", "options": {"ssl": True}}})

@@ -49,3 +49,23 @@ def test_nested_dicts_raise_type_error():
     """
     with pytest.raises(TypeError, match=r"'db\.options' is a dict.*nested dicts are not supported"):
         secsie.generate_config({"db": {"host": "localhost", "options": {"ssl": True}}})
+
+
+def test_space_hash_in_string_raises_value_error():
+    """
+    Tests that strings containing a space followed by # (an inline comment) are rejected
+    """
+    with pytest.raises(ValueError, match=r"'password' contains a space followed by '#'"):
+        secsie.generate_config({"password": "pass #word"})
+
+    with pytest.raises(ValueError, match=r"'section\.items' contains a space followed by '#'"):
+        secsie.generate_config({"section": {"items": ["fine", "#not fine"]}})
+
+
+def test_hash_without_leading_space_round_trips():
+    """
+    Tests that a # that is not preceded by a space is a valid part of a value, like in passwords
+    """
+    conf = {"password": "p#ss#w0rd", "section": {"password": "som#$cure", "list": ["a#b", "c"]}}
+
+    assert secsie.parse_config(secsie.generate_config(conf)) == conf

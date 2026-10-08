@@ -59,7 +59,7 @@ def generate_config(conf_obj: dict, indent: str = '\t') -> str:
                         f"booleans, None, or lists."
                     )
                 elif isinstance(v, list):
-                    conf += f'\t{k} = {", ".join(_format_value(i, where) for i in v)}\n'
+                    conf += f'{indent}{k} = {", ".join(_format_value(i, where) for i in v)}\n'
                 else:
                     conf += f"{';' if v == '' else ''}{indent}{k} = {_format_value(v, where)}\n"
             conf += "\n"

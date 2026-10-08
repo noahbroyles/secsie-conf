@@ -69,3 +69,14 @@ def test_hash_without_leading_space_round_trips():
     conf = {"password": "p#ss#w0rd", "section": {"password": "som#$cure", "list": ["a#b", "c"]}}
 
     assert secsie.parse_config(secsie.generate_config(conf)) == conf
+
+
+def test_indent_is_used_for_lists_in_sections():
+    """
+    Tests that every line in a section, including lists, uses the indent that was passed in
+    """
+    conf = {"s": {"number": 1, "items": ["x", "y"], "text": "hello"}}
+
+    assert secsie.generate_config(conf, indent="  ") == "\n[s]\n  number = 1\n  items = x, y\n  text = hello\n\n"
+    assert secsie.generate_config(conf, indent="") == "\n[s]\nnumber = 1\nitems = x, y\ntext = hello\n\n"
+    assert secsie.generate_config(conf) == "\n[s]\n\tnumber = 1\n\titems = x, y\n\ttext = hello\n\n"

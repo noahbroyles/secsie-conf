@@ -29,7 +29,8 @@ def generate_config(conf_obj: dict, indent: str = '\t') -> str:
             continue
         elif isinstance(value, list):
             conf += f'{key} = {", ".join(value)}\n'
-        conf += f"{key} = {value}\n"
+            continue
+        conf +=f"{key} = {value}\n"
 
     return conf
 

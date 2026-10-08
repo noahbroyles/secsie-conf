@@ -1,4 +1,4 @@
-import secsie
+import re
 import pathlib
 from setuptools import setup
 
@@ -6,12 +6,25 @@ from setuptools import setup
 HERE = pathlib.Path(__file__).parent
 
 # The text of the README file
-README = (HERE / "README.md").read_text()
+README = (HERE / "README.md").read_text(encoding="utf-8")
+
+
+def read_version() -> str:
+    """
+    Read the version out of the package's source instead of importing the package, because importing it would break
+    the build as soon as the package depends on something that isn't installed yet.
+    """
+    init = (HERE / "secsie" / "__init__.py").read_text(encoding="utf-8")
+    match = re.search(r"^__version__ = ['\"]([^'\"]+)['\"]", init, re.MULTILINE)
+    if match is None:
+        raise RuntimeError("Could not find __version__ in secsie/__init__.py")
+    return match.group(1)
+
 
 # This call to setup() does all the work
 setup(
     name="secsie-conf",
-    version=secsie.__version__,
+    version=read_version(),
     description="A small library for parsing configuration files",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -21,7 +34,6 @@ setup(
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",

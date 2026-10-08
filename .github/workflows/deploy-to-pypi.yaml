@@ -6,15 +6,21 @@ on:
 
 
 jobs:
+  # Nothing is published unless the tests pass on every supported version of Python
+  test:
+    name: Run the unit tests
+    uses: ./.github/workflows/unit-tests.yaml
+
   deploy:
     name: Deploy Package to PyPi
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 

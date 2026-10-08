@@ -493,6 +493,18 @@ You should notice 2 things:
 
 Also note that `trans_sid_tags` went in as a quoted ini string, and came out as a plain `a=href,area=href,frame=src,form=`. Since a comma means "list" in `secsie`, this will read back as a list. See the limits below.
 
+### Change the header
+`generate_config_file` starts every file with a comment saying it was auto-generated. Use `header` to say something else, with one comment written for every line of your text, or pass an empty string to leave it out:
+```python
+secsie.generate_config_file(config, 'app.secsie', header="Managed by the deploy script.\n\nDo not edit by hand.")
+```
+```ini
+# Managed by the deploy script.
+#
+# Do not edit by hand.
+```
+`generate_config` only returns the config text, with no header at all. A header is always written as comments, so it can never change what the file is read back as.
+
 ### What the generator can and can't write (`secsie` mode)
 Generating a config keeps your *data*, not the original file. Comments, blank lines, spacing, and spellings like `yes`/`no` (they come back as `true`/`false`) are not preserved, and `None` is written as `null`. A few things can't be represented in `secsie` at all, and the generator tells you instead of writing a config that reads back differently:
 - Nested dicts raise a `TypeError`. `secsie` only has one level of sections.
@@ -532,7 +544,7 @@ How it differs from `secsie` mode:
 - Empty strings are written as `""` and read back, instead of being commented out.
 - Section names can have spaces (`[CLI Server]`) and are never changed.
 - Keys in a section are not indented unless you pass `indent`. As in `secsie` mode, top level keys are written first.
-- `generate_config_file` starts the file with a `;` comment instead of a `#` one, because `;` is the comment character `ini` readers agree on.
+- `generate_config_file` starts the file with a `;` comment (including a custom `header`) instead of a `#` one, because `;` is the comment character `ini` readers agree on.
 - Lists are written as `a, b`. A list with one item gets a trailing comma (`a,`) and an empty list is a lone comma (`,`), so they are still read as lists.
 
 Whatever can't be written faithfully raises an error that names the key and says why, so the file is never written with a different value than you gave. Besides nested dicts, these can not be written in `ini` mode:

@@ -80,3 +80,16 @@ def test_indent_is_used_for_lists_in_sections():
     assert secsie.generate_config(conf, indent="  ") == "\n[s]\n  number = 1\n  items = x, y\n  text = hello\n\n"
     assert secsie.generate_config(conf, indent="") == "\n[s]\nnumber = 1\nitems = x, y\ntext = hello\n\n"
     assert secsie.generate_config(conf) == "\n[s]\n\tnumber = 1\n\titems = x, y\n\ttext = hello\n\n"
+
+
+def test_top_level_keys_are_written_before_sections():
+    """
+    Tests that a top level key which comes after a section in the dict is not read back as part of that section
+    """
+    conf = {"first": 1, "section": {"inside": 2}, "last": [3, 4], "other": {"inside": 5}, "blank": ""}
+    generated = secsie.generate_config(conf)
+
+    assert generated == "first = 1\nlast = 3, 4\n;blank = \n\n[section]\n\tinside = 2\n\n\n[other]\n\tinside = 5\n\n"
+    assert secsie.parse_config(generated) == {
+        "first": 1, "last": [3, 4], "section": {"inside": 2}, "other": {"inside": 5}
+    }

@@ -499,3 +499,5 @@ Generating a config keeps your *data*, not the original file. Comments, blank li
 - A string with a space followed by `#` raises a `ValueError`, since that would start an inline comment. A `#` with no space before it is fine.
 
 Empty strings are commented out (see 2 above), so they are not present when the config is parsed again. Strings containing a comma are written as is, so they are read back as lists.
+
+Keys that aren't in a section are always written before the first section, whatever order they have in your `dict`. A section only ends where the next one begins, so a key written after a section would be read back as part of it.

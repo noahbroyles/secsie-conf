@@ -39,6 +39,9 @@ def generate_config(conf_obj: dict, indent: str = '\t') -> str:
     present when the generated config is parsed again. Comments and formatting from a file that was parsed earlier
     are not preserved either, only the data is.
 
+    Keys that are not in a section are always written before the first section, whatever their order in the
+    dictionary, since there is no way to write a key after a section without it becoming part of that section.
+
     :param conf_obj: The dictionary to parse into a configuration language string
     :param indent: The character(s) to use for indentation. Can be tab or spaces. Defaults to tab character, '\t'
     :return: a string of configuration code
@@ -47,27 +50,33 @@ def generate_config(conf_obj: dict, indent: str = '\t') -> str:
     """
 
     conf = ''
+    sections = {}
+
+    # Attributes that aren't in a section have to come first. A section only ends where the next one begins, so
+    # anything written after a section header (even after a blank line) would be read back as part of that section.
     for key, value in conf_obj.items():
         if isinstance(value, dict):
-            conf += f"\n[{key.replace(' ', '')}]\n"
-            for k, v in value.items():
-                where = f"{key}.{k}"
-                if isinstance(v, dict):
-                    raise TypeError(
-                        f"Cannot generate config: '{where}' is a dict, but nested dicts are not supported. "
-                        f"Secsie only has one level of sections, so a section's values must be strings, numbers, "
-                        f"booleans, None, or lists."
-                    )
-                elif isinstance(v, list):
-                    conf += f'{indent}{k} = {", ".join(_format_value(i, where) for i in v)}\n'
-                else:
-                    conf += f"{';' if v == '' else ''}{indent}{k} = {_format_value(v, where)}\n"
-            conf += "\n"
-            continue
+            sections[key] = value
         elif isinstance(value, list):
             conf += f'{key} = {", ".join(_format_value(i, key) for i in value)}\n'
-            continue
-        conf += f"{';' if value == '' else ''}{key} = {_format_value(value, key)}\n"
+        else:
+            conf += f"{';' if value == '' else ''}{key} = {_format_value(value, key)}\n"
+
+    for key, section in sections.items():
+        conf += f"\n[{key.replace(' ', '')}]\n"
+        for k, v in section.items():
+            where = f"{key}.{k}"
+            if isinstance(v, dict):
+                raise TypeError(
+                    f"Cannot generate config: '{where}' is a dict, but nested dicts are not supported. "
+                    f"Secsie only has one level of sections, so a section's values must be strings, numbers, "
+                    f"booleans, None, or lists."
+                )
+            elif isinstance(v, list):
+                conf += f'{indent}{k} = {", ".join(_format_value(i, where) for i in v)}\n'
+            else:
+                conf += f"{';' if v == '' else ''}{indent}{k} = {_format_value(v, where)}\n"
+        conf += "\n"
 
     return conf
 

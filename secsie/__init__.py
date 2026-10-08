@@ -7,7 +7,7 @@ r"""
 /____/ \___/ \___//____//_/ \___/  
 ---------------------------------------
 A small library for parsing configuration files.
-Supports secsie and ini formats. Not suitable for writing .ini files, but reads them just fine.
+Supports secsie and ini formats, for both reading and writing.
 """
 from .exceptions import InvalidSyntax
 from .parser import parse_config, parse_config_file

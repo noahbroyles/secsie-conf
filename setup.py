@@ -33,7 +33,6 @@ setup(
     author_email="noah@javamate.net",
     license="MIT",
     classifiers=[
-        "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
@@ -42,6 +41,8 @@ setup(
         "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: 3.14",
     ],
+    # Matches the oldest version of Python the unit tests run on
+    python_requires=">=3.8",
     packages=["secsie"],
     include_package_data=True
 )

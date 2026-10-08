@@ -33,13 +33,13 @@ These are the rules of the secsie config language:
 key = value
 ```
 7. Spaces are not allowed in key names or section tags. Only `a-z`(case insensitive), `0-9`, `_`, and `-` are allowed in section tag names, while other special characters *are* allowed in key names.
-8. Values can consist of any character except `#`. Leading and trailing whitespace is removed. String values separated by commas are interpreted as lists.
+8. Values can contain any character, including `#`. A `#` only starts an inline comment when it is preceded by a space, so `password = p#ss` is fine but `password = p #ss` is cut off at the space. Leading and trailing whitespace is removed. String values separated by commas are interpreted as lists.
 
 ## INI
 `secsie-conf` can be used to read `.ini` files, as long as the mode `ini` is specifed to the parser. The rules of interpretation for `.ini` files vary slightly.
 ### Differences:
-- Section names are allowed to contain spaces and dashes
-- quoted strings are valid, but the quotes are removed (there is no need to quote string in `secsie` ;)  
+- Section names are allowed to contain spaces
+- quoted strings are valid, but the quotes are removed (there is no need to quote string in `secsie` ;). A quoted value is always kept as a string, so `"42"` stays a string and `"a,b"` is not split into a list  
 - Lists in `.ini` files can have a trailing comma with no effect, but a trailing comma in `secsie` will create a blank string  
 `secsie-conf` can **NOT** be used to write `.ini` files. You can read an `.ini` file and output it in valid `secsie`, but you cannot expect valid `.ini` output.
 
@@ -79,6 +79,15 @@ untruth3 = no
 # To interpret a value as a list, you must separate the list values with a comma.
 list = this, that, the other
 ```
+
+## Limitations
+`secsie` has no quoting. A value is whatever you write, and its type is inferred from it, so quotes are just ordinary characters (`name = "Bob"` gives `'"Bob"'`, quotes included). This keeps the language simple, but it means some values can't be written as strings:
+- Digits that must stay text, like an account number or zip code with a leading zero. `090192837418` is read as the int `90192837418`.
+- Words that are special values, such as `true`, `no`, `yes`, and `null`.
+- Strings containing a comma, which are read as lists.
+- Strings containing a space followed by `#`, which start an inline comment.
+
+If your program needs one of these as a string, convert it after reading, for example `str(config['zip']).zfill(5)`. Only `ini` mode understands quotes (see above), since it exists to read existing `.ini` files.
 
 ## Examples
 `examples/valid.secsie.conf`:
@@ -162,10 +171,8 @@ Result:
 ```console
 Traceback (most recent call last):
   ...
-  File "/Users/nbroyles/PycharmProjects/secsie-conf/secsie/__init__.py", line 90, in _write_to_conf_
-    raise InvalidSyntax(f'"{line}" - bad section descriptor or value assignment', line_number)
   File "<string>", line 955
-secsie.InvalidSyntax: Invalid syntax on line 955: "[CLI Server]" - bad section descriptor or value assignment
+secsie.InvalidSyntax: Invalid syntax on line 955: "[CLI Server]" - bad section descriptor or value assignment (line 955)
 ```
 We can see that this up and broke. WTF?! Actually, it's okay. Spaces aren't allowed in `secsie` section names, remember? When reading an `.ini` file, we need to pass the argument `mode='ini'` to the `parse_config_file` function, like this:  
 ```python
@@ -309,12 +316,7 @@ print(json.dumps(config, indent=2))
     "session.cache_expire": 180,
     "session.use_trans_sid": 0,
     "session.sid_length": 26,
-    "session.trans_sid_tags": [
-      "a=href",
-      "area=href",
-      "frame=src",
-      "form="
-    ],
+    "session.trans_sid_tags": "a=href,area=href,frame=src,form=",
     "session.sid_bits_per_character": 5
   },
   "Assertion": {
@@ -463,7 +465,7 @@ Output (`examples/php_ini.secsie.conf`):
 	session.cache_expire = 180
 	session.use_trans_sid = 0
 	session.sid_length = 26
-	session.trans_sid_tags = a=href, area=href, frame=src, form=
+	session.trans_sid_tags = a=href,area=href,frame=src,form=
 	session.sid_bits_per_character = 5
 
 
@@ -484,9 +486,18 @@ Output (`examples/php_ini.secsie.conf`):
 
 [ldap]
 	ldap.max_links = -1
-
-
 ```
 You should notice 2 things: 
 1. Keys and value assignments are separated by an equals sign with a space ON BOTH SIDES! `key = value`, **NOT** `key=value`. That is ugly and lazy. This ain't minified JS, son. [They make things for that...](https://www.amazon.com/dp/B089C3TZL9)
 2. Blank values were commented out. If you disagree with that, *MAKE 'EM NULL*! `key = ` doesn't say anything.
+
+Also note that `trans_sid_tags` went in as a quoted ini string, and came out as a plain `a=href,area=href,frame=src,form=`. Since a comma means "list" in `secsie`, this will read back as a list. See the limits below.
+
+### What the generator can and can't write
+Generating a config keeps your *data*, not the original file. Comments, blank lines, spacing, and spellings like `yes`/`no` (they come back as `true`/`false`) are not preserved, and `None` is written as `null`. A few things can't be represented in `secsie` at all, and the generator tells you instead of writing a config that reads back differently:
+- Nested dicts raise a `TypeError`. `secsie` only has one level of sections.
+- A string with a space followed by `#` raises a `ValueError`, since that would start an inline comment. A `#` with no space before it is fine.
+
+Empty strings are commented out (see 2 above), so they are not present when the config is parsed again. Strings containing a comma are written as is, so they are read back as lists.
+
+Keys that aren't in a section are always written before the first section, whatever order they have in your `dict`. A section only ends where the next one begins, so a key written after a section would be read back as part of it.

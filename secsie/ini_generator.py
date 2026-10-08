@@ -15,7 +15,6 @@ from __future__ import annotations
 import re
 import math
 from decimal import Decimal
-
 from secsie.modes import MODES
 
 _INI = MODES['ini']

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from os import PathLike
 from pathlib import Path
-
 from secsie.modes import MODES
 from secsie.ini_generator import generate_ini
 
